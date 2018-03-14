@@ -14,12 +14,8 @@ string Chia2(string a);
 
 void DecimalToBigInt(BigInt &a, string dec);
 
-void ScanBigInt(BigInt &x)
-{
-	string a;
-	cin >> a;
-	DecimalToBigInt(x, a);
-}
+void ScanBigInt(BigInt &x, string temp);
+
 
 string DecimalToBinary(unsigned int x);
 

@@ -1,6 +1,11 @@
 ﻿#include "BigInt.h"
 #include <map>
-//s/sadasjkdhasghdhgadgahdgagdasghj
+
+void ScanBigInt(BigInt &x, string temp)
+{
+	DecimalToBigInt(x, temp);
+}
+
 string Chia2(string a)
 {
 	int n = a.length();
@@ -210,9 +215,9 @@ string BinToHex(string bit)
 	}
 	while (id < n)
 	{
-		temp = bit.substr(4, id);
+		temp = bit.substr(id, 4);
 		hex.push_back(BiToHex[temp]);
-		n += 4;
+		id += 4;
 	}
 	return hex;
 }

@@ -14,12 +14,16 @@ int main(int argc, char ** argv)
 	
 	while (!fIn.eof())
 	{
+		bNum = BigInt();
+		bNum1 = BigInt();
+		bNum2 = BigInt();
+		s4 = "";
 		//Có 2TH:
 		//TH1 : <hệ số> p (2/10/16) <số thứ nhất> <phép tính> <số thứ 2>
-		//TH2 : <hệ số 1>p1 (2/10/16) <hệ số 2>p2(2/10/16) <số>
+		//TH2 : <hệ số 1> p1 (2/10/16) <hệ số 2>p2(2/10/16) <số>
 		//TH3: <hệ số>p (2/10/16) <số> <NOT>(~)
 		//Luôn luôn đọc được s1, s2, s3
-		s4 = "";
+		
 		fIn >> s1 >> s2 >> s3;
 		if ((s3[0] < '0' || s3[0] > '9') && (s3 != "~"))
 			fIn >> s4;
@@ -27,9 +31,20 @@ int main(int argc, char ** argv)
 		//Nếu s4 = "" thì là TH2,TH3 ngược lại là TH1
 		if (s4 == "")
 		{
-			p1 = atoi(s1.c_str());//số p1
-			p2 = atoi(s2.c_str());//số p2
-			// chuyenHe(p1, p2) 
+			if (s3 != "~")
+			{
+				p1 = atoi(s1.c_str());//số p1
+				p2 = atoi(s2.c_str());//số p2
+				ScanBigInt(bNum, s3);
+				// chuyenHe(p1, p2) 
+			}
+			else
+			{
+				p1 = atoi(s1.c_str());// số p
+				ScanBigInt(bNum, s2);
+				//ham NOT
+			}
+
 			//--> ghi ra file
 		}
 		else
@@ -39,6 +54,13 @@ int main(int argc, char ** argv)
 			//--> ghi ra file
 		}
 	}
+
+	/*ScanBigInt(bNum1);
+	ScanBigInt(bNum2);
+	
+	bNum = bNum1 + bNum2;
+	
+	cout << DecToHex(bNum);*/
 
 	fIn.close();
 	fOut.close();
