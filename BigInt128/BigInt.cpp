@@ -1,6 +1,6 @@
 ﻿#include "BigInt.h"
 #include <map>
-
+//s/sadasjkdhasghdhgadgahdgagdasghj
 string Chia2(string a)
 {
 	int n = a.length();
