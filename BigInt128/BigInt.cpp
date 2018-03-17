@@ -42,6 +42,18 @@ string Nhan2(string a)
 	return a;
 }
 
+string HaiMuX(int n)
+{
+	string a = "2";
+	if (n == 0)
+		return "1";
+	for (int i = 1; i < n; i++)
+	{
+		a = Nhan2(a);
+	}
+	return a;
+}
+
 string Cong(string a, string b)
 {
 	string x = "";
@@ -80,51 +92,71 @@ string Cong(string a, string b)
 	return x;
 }
 
-string HaiMuX(int n)
-{
-	string a = "2";
-	if (n == 0)
-		return "1";
-	for (int i = 1; i < n; i++)
-	{
-		a = Nhan2(a);
-	}
-	return a;
-}
-
 void DecimalToBigInt(BigInt &a, string dec)
 {
 	int n, chiSo;
 	int vitriBit;
-	//string h;
+	string h = "";
 	if (dec[0] == '-')
 	{
 		dec.erase(dec.begin());
 		a.data[0] = a.data[0] | (1 << (31));
 	}
 	n = dec.length();
-	for (int i = 0;; i++)
+	for (int i = 127;; i--)
 	{
 		if (n == 0) break;
 		if ((dec[n - 1] - '0') % 2 == 1)
 		{
-			chiSo = 3 - i / 32;
-			vitriBit = i % 32;
+			chiSo = i / 32;
+			vitriBit = 31 - i % 32;
 			if (chiSo < 0 || (chiSo == 0 && vitriBit == 31))
 			{
 				cout << "So qua lon.";
 				return;
 			}
-			a.data[chiSo] = a.data[chiSo] | (1 << (vitriBit));
+			a.data[chiSo] = a.data[chiSo] | (1 << vitriBit);
+			//h = "1" + h;
 		}
-		//Chỉ số = 3 khi i từ 0 tới 31
-		//Chỉ số = 2 khi i từ 32 tới 63
-		//Chỉ số = 1 khi i từ 64 tới 95
-		//Chỉ số = 0 khi i từ 96 tới 127
+		//else
+			//h = "0" + h;
 		dec = Chia2(dec);
 		n = dec.length();
 	}
-	//cout << h << endl;
+	cout << h << endl;
+}
+
+void BinaryToBigInt(BigInt & a, string dec)
+{
+	int n = dec.length();
+	int ID, bitID;
+	for (int i = 127;; i--)
+	{
+		if (n == 0)
+			break;
+		ID = i / 32;
+		bitID = 31 - i % 32;
+		if (dec[n-1] == '1')
+		{
+			a.data[ID] = a.data[ID] | (1 << bitID);
+		}
+		n--;
+	}
+}
+
+void HexadecimalToBigInt(BigInt & a, string dec)
+{
+	string bin = "";
+	map<char, string> HexToBi;
+	{
+		HexToBi['0'] = "0000"; HexToBi['1'] = "0001"; HexToBi['2'] = "0010"; HexToBi['3'] = "0011";
+		HexToBi['4'] = "0100"; HexToBi['5'] = "0101"; HexToBi['6'] = "0110"; HexToBi['7'] = "0111";
+		HexToBi['8'] = "1000"; HexToBi['9'] = "1001"; HexToBi['A'] = "1010"; HexToBi['B'] = "1011";
+		HexToBi['C'] = "1100"; HexToBi['D'] = "1101"; HexToBi['E'] = "1110"; HexToBi['F'] = "1111";
+	}
+	for (int i = 0; i < dec.length(); i++)
+		bin += HexToBi[dec[i]];
+	BinaryToBigInt(a, bin);
 }
 
 string DecimalToBinary(unsigned int x)
@@ -132,22 +164,16 @@ string DecimalToBinary(unsigned int x)
 	string bin = "";
 	while (x != 0)
 	{
-		bin = " " + bin;
 		if (x % 2 == 1)
-		{
-			bin[0] = '1';
-		}
+			bin = '1' + bin;
 		else
-		{
-			bin[0] = '0';
-		}
+			bin = '0' + bin;
 		x /= 2;
 	}
 	int n = bin.length();
 	while (n < 32)
 	{
-		bin = " " + bin;
-		bin[0] = '0';
+		bin = '0' + bin;
 		n++;
 	}
 	return bin;
