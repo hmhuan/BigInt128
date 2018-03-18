@@ -64,24 +64,22 @@
 int main(int argc, char * argv[])
 {
 	BigInt bNum1, bNum2, bNum3, bNum4;
-	string s = "1000000000000000000";
+	string s1 = "-12";
+	string s2 = "100";
 	string bin = "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
 	string hex = "1A2B3C";
 
 
-	DecimalToBigInt(bNum1, s);
-	BinaryToBigInt(bNum2, bin);
-	HexadecimalToBigInt(bNum3, hex);
-	
-	cout << DecToHex(bNum1) << endl;
+	DecimalToBigInt(bNum1, s1);
+	DecimalToBigInt(bNum2, s2);
+
+	cout << DecToBin(bNum1) << endl;
+
+	bNum3 = bNum1 & bNum2;
+	cout << (100 & -12) << endl;
 	cout << DecToBin(bNum3) << endl;
 
-	cout << bNum2.data[0] << " ";
-	cout << bNum2.data[1] << " ";
-	cout << bNum2.data[2] << " ";
-	cout << bNum2.data[3] << endl;
-
-	cout << bNum3.data[3] << endl;
+	
 
 	return 0;
 }

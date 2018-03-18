@@ -42,3 +42,7 @@ BigInt operator-(BigInt a, BigInt b);
 BigInt operator*(BigInt a, BigInt b);
 string NhanVsX(char, string);
 BigInt operator/(BigInt a, BigInt b);
+
+BigInt operator& (BigInt a, BigInt b);
+BigInt operator| (BigInt a, BigInt b);
+BigInt operator^ (BigInt a, BigInt b);

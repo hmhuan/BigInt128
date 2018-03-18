@@ -97,33 +97,55 @@ void DecimalToBigInt(BigInt &a, string dec)
 	int n, chiSo;
 	int vitriBit;
 	string h = "";
+	bool check = true;
+
 	if (dec[0] == '-')
 	{
+		check = false;
 		dec.erase(dec.begin());
-		a.data[0] = a.data[0] | (1 << (31));
 	}
 	n = dec.length();
+
 	for (int i = 127;; i--)
 	{
 		if (n == 0) break;
+		
+		chiSo = i / 32;
+		vitriBit = 31 - i % 32;
+
 		if ((dec[n - 1] - '0') % 2 == 1)
 		{
-			chiSo = i / 32;
-			vitriBit = 31 - i % 32;
 			if (chiSo < 0 || (chiSo == 0 && vitriBit == 31))
 			{
-				cout << "So qua lon.";
+				std::cout << "So qua lon.";
 				return;
 			}
 			a.data[chiSo] = a.data[chiSo] | (1 << vitriBit);
-			//h = "1" + h;
 		}
-		//else
-			//h = "0" + h;
 		dec = Chia2(dec);
 		n = dec.length();
 	}
-	cout << h << endl;
+	if (!check)
+	{
+		int j = 127;
+		while (true)
+		{
+			unsigned int temp;
+			chiSo = j / 32;
+			vitriBit = 31 - j % 32;
+			temp = a.data[chiSo];
+			if ((a.data[chiSo] >> vitriBit) & 1 == 1)
+				break;
+			j--;
+		}
+		j--;
+		for (j; j >= 0; j--)
+		{
+			chiSo = j / 32;
+			vitriBit = 31 - j % 32;
+			a.data[chiSo] = (1 << vitriBit) ^ a.data[chiSo];
+		}
+	}
 }
 
 void BinaryToBigInt(BigInt & a, string dec)
@@ -217,7 +239,7 @@ BigInt BinToDec(string bit)
 		}
 	}
 	dec = temp + dec;
-	cout << dec;
+	std::cout << dec;
 	DecimalToBigInt(a, dec);
 	return a;
 }
@@ -284,7 +306,6 @@ string BinToDec_string(string bit)
 		dec = "0";
 	return dec;
 }
-
 
 BigInt operator+(BigInt a, BigInt b)
 {
@@ -516,4 +537,28 @@ BigInt operator/(BigInt a, BigInt b)//Chia số a cho số b
 	//cout << thuong;
 	DecimalToBigInt(result, thuong);
 	return result;
+}
+
+BigInt operator& (BigInt a, BigInt b)
+{
+	BigInt res;
+	for (int i = 0; i < 4; i++)
+		res.data[i] = a.data[i] & b.data[i];
+	return res;
+}
+
+BigInt operator|(BigInt a, BigInt b)
+{
+	BigInt res;
+	for (int i = 0; i < 4; i++)
+		res.data[i] = a.data[i] | b.data[i];
+	return res;
+}
+
+BigInt operator^(BigInt a, BigInt b)
+{
+	BigInt res;
+	for (int i = 0; i < 4; i++)
+		res.data[i] = a.data[i] ^ b.data[i];
+	return res;
 }
