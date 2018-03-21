@@ -13,15 +13,15 @@ struct BigInt {
 string Chia2(string a);
 string Nhan2(string a);
 string HaiMuX(int n);
-
+string ChuanHoa(string bit);
 
 void DecimalToBigInt(BigInt &a, string dec);
 void BinaryToBigInt(BigInt &a, string dec);
 void HexadecimalToBigInt(BigInt &a, string dec);
 
 
-void ScanBigInt(BigInt &x, string temp);
-
+void ScanBigInt(BigInt &x, string temp, int base);
+void PrintBigInt(BigInt &x, int base);
 
 string DecimalToBinary(unsigned int x);
 
@@ -33,9 +33,13 @@ string BinToHex(string bit);
 
 BigInt BinToDec(string bit);
 
+string BinaryToDecimal(string bit);
+
 string DecToHex(BigInt x);
 
 string Cong(string a, string b);
+
+void Bu2(BigInt &a);
 
 BigInt operator+(BigInt a, BigInt b);
 BigInt operator-(BigInt a, BigInt b);
@@ -46,3 +50,7 @@ BigInt operator/(BigInt a, BigInt b);
 BigInt operator& (BigInt a, BigInt b);
 BigInt operator| (BigInt a, BigInt b);
 BigInt operator^ (BigInt a, BigInt b);
+BigInt operator~ (BigInt a);
+
+BigInt operator << (BigInt a, int n);
+BigInt operator >> (BigInt a, int n);
