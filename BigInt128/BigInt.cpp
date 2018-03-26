@@ -19,9 +19,19 @@ void ScanBigInt(BigInt &x, string temp, int base)
 	}
 }
 
-void PrintBigInt(BigInt & x, int base)
+string PrintBigInt(BigInt & x, int base)
 {
-
+	switch (base)
+	{
+	case 10:
+		return BinaryToDecimal(DecToBin(x));
+	case 2:
+		return DecToBin(x);
+	case 16:
+		return DecToHex(x);
+	default:
+		return "";
+	}
 }
 
 string DecToBin(BigInt x)
@@ -29,12 +39,14 @@ string DecToBin(BigInt x)
 	string bin = "";
 	for (int i = 0; i < 4; i++)
 	{
-		bin = bin + DecimalToBinary(x.data[i]);
+		bin += DecimalToBinary(x.data[i]);
 	}
 	while (bin[0] == '0')
 	{
 		bin.erase(bin.begin());
 	}
+	if (bin == "")
+		bin = "0";
 	return bin;
 }
 
@@ -208,6 +220,8 @@ void DecimalToBigInt(BigInt &a, string dec)
 {
 	int n, chiSo, vitriBit;
 	bool check = true;
+	
+	a =  BigInt();
 
 	if (dec[0] == '-')
 	{
@@ -243,6 +257,9 @@ void BinaryToBigInt(BigInt & a, string dec)
 {
 	int n = dec.length();
 	int ID, bitID;
+	
+	a = BigInt();
+
 	for (int i = 127;; i--)
 	{
 		if (n == 0)
@@ -358,12 +375,134 @@ BigInt operator-(BigInt a, BigInt b)
 
 BigInt operator*(BigInt a, BigInt b)
 {
-	return BigInt();
+	BigInt result, temp1;
+	//temp1 để chứa số để cộng thêm vô result
+	int truongHop = 0, nB, chiSo = 0;
+	string binA = DecToBin(a),
+		binB = DecToBin(b);
+	if (binA.length() < 128)
+		binA = "0" + binA;
+	if (binB.length() < 128)
+		binB = "0" + binB;
+	//Xét trường hợp. Trường hợp = 0 thì hai số khác dấu, khác 0 là hai số cùng dấu
+	if (binB[0] == '0')
+	{
+		truongHop += 1;
+		binB.erase(binB.begin());
+	}
+	else
+	{
+		truongHop -= 1;
+		string decB = BinaryToDecimal(binB);
+		decB.erase(decB.begin());
+		DecimalToBigInt(b, decB);
+		binB = DecToBin(b);
+	}
+	if (binA[0] == '0')
+	{
+		truongHop += 1;
+		binA.erase(binA.begin());
+	}
+	else
+	{
+		string decA = BinaryToDecimal(binA);
+		decA.erase(decA.begin());
+		DecimalToBigInt(a, decA);
+		binA = DecToBin(a);
+	}
+	//Nhân theo kiểu nhân hai số thập phân.
+	nB = binB.length();
+	while (chiSo < nB)
+	{
+		string temp = binA;
+		if (binB[chiSo] == '1')
+		{
+			for (int i = 0; i < nB - 1 - chiSo; i++)
+				temp = temp + "0";
+			//DecimalToBigInt(temp1, BinaryToDecimal(temp));
+			BinaryToBigInt(temp1, temp);
+			result = result + temp1;
+		}
+		chiSo++;
+	}
+	if (truongHop != 0)
+		return result;
+	else
+	{
+		string decRes = BinaryToDecimal(DecToBin(result));
+		decRes = "-" + decRes;
+		DecimalToBigInt(result, decRes);
+		return result;
+	}
+	/*
+	// Nhân Booth
+	BigInt res, bigA;
+	string AQ, A, Q = DecToBin(a), Qt1 = "0", M = DecToBin(b);
+	int n, k;
+	//Khởi tạo
+	while (Q.length() < M.length())
+		Q = '0' + Q;
+	while (M.length() < Q.length())
+		M = '0' + M;
+	n = k = Q.length();
+	for (int i = 0; i < n; i++)
+		A += '0';
+	
+	while (k > 0)
+	{
+		if (Q[n - 1] + Qt1 == "10")
+		{
+			BinaryToBigInt(bigA, A);
+			A = DecToBin(bigA - b);
+		}
+		else if (Q[n - 1] + Qt1 == "01")
+		{
+			BinaryToBigInt(bigA, A);
+			A = DecToBin(bigA + b);
+		}
+		while()
+	}
+
+	BinaryToBigInt(res, AQ);
+	return res;*/
 }
 
-BigInt operator/(BigInt a, BigInt b)//Chia số a cho số b
+BigInt operator/(BigInt a, BigInt b)
 {
-	return BigInt();
+	BigInt res, bigA;
+	string A, Q = DecToBin(a), M = DecToBin(b);
+	string temp = DecToBin(a - b);
+	int n = Q.length(), k = n;
+
+	if (temp[0] == '1' && temp.length() == 128)
+		return res;
+	//Khởi tạo
+	if (Q.length() == 128 && Q[0] == '1')
+		for (int i = 0; i < n; i++)
+			A += '1';
+	else
+		for (int i = 0; i < n; i++)
+			A += '0';
+	while (k > 0)
+	{
+		A = A.substr(1, n - 1) + Q[0];
+		Q = Q.substr(1, n - 1) + '0';
+		BinaryToBigInt(bigA, A);
+		A = DecToBin(bigA - b);
+		if (A.length() == 128 && A[0] == '1')
+		{
+			Q[n-1] = '0';
+			BinaryToBigInt(bigA, A);
+			A = DecToBin(bigA + b);
+		}
+		else
+			Q[n - 1] = '1';
+		while (A.length() < n)
+			A = "0" + A;
+		k--;
+	}
+	BinaryToBigInt(res, Q);
+	return res;
 }
 
 //Nhóm phép toán trên bit
@@ -394,37 +533,30 @@ BigInt operator^(BigInt a, BigInt b)
 BigInt operator~(BigInt a)
 {
 	BigInt res = a;
-	int ID, bitID;
-	for (int j = 127; j >= 0; j--)
-	{
-		ID = j / 32;
-		bitID = 31 - j % 32;
-		res.data[ID] = (1 << bitID) ^ res.data[ID];
-	}
+	for (int i = 0; i < 4; i++)
+		res.data[i] = ~res.data[i];
 	return res;
 }
 
-BigInt operator << (BigInt a, int n) {
+BigInt operator << (BigInt a, int n) 
+{
 	string temp = ChuanHoa(DecToBin(a));
+	n = n < 0 ? 0 : n;
+	n = n > 128 ? 128 : n;
 
-	if (n <= 128 && n >= 0) {
-		temp = temp.substr(n, 128 - n);
-		for (int i = 0; i < n; i++)
-			temp += '0';
-		return BinToDec(temp);
-	}
-	return a;
+	temp = temp.substr(n, 128 - n);
+	for (int i = 0; i < n; i++)
+		temp += '0';
+	return BinToDec(temp);
 }
 
-BigInt operator >> (BigInt a, int n) {
-
+BigInt operator >> (BigInt a, int n) 
+{
 	string temp = ChuanHoa(DecToBin(a));
-
-	if (n <= 128 && n >= 0) {
-		temp = temp.substr(0, 128 - n);
-		for (int i = 0; i < n; i++)
-			temp = '0' + temp;
-		return BinToDec(temp);
-	}
-	return a;
+	n = n < 0 ? 0 : n;
+	n = n > 128 ? 128 : n;
+	temp = temp.substr(0, 128 - n);
+	for (int i = 0; i < n; i++)
+		temp = '0' + temp;
+	return BinToDec(temp);
 }

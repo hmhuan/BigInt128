@@ -21,7 +21,7 @@ void HexadecimalToBigInt(BigInt &a, string dec);
 
 
 void ScanBigInt(BigInt &x, string temp, int base);
-void PrintBigInt(BigInt &x, int base);
+string PrintBigInt(BigInt &x, int base);
 
 string DecimalToBinary(unsigned int x);
 
@@ -30,11 +30,9 @@ string DecToBin(BigInt x);
 
 //Hệ 2 -> Hệ 16
 string BinToHex(string bit);
-
 BigInt BinToDec(string bit);
 
 string BinaryToDecimal(string bit);
-
 string DecToHex(BigInt x);
 
 string Cong(string a, string b);
@@ -44,13 +42,12 @@ void Bu2(BigInt &a);
 BigInt operator+(BigInt a, BigInt b);
 BigInt operator-(BigInt a, BigInt b);
 BigInt operator*(BigInt a, BigInt b);
-string NhanVsX(char, string);
 BigInt operator/(BigInt a, BigInt b);
 
 BigInt operator& (BigInt a, BigInt b);
 BigInt operator| (BigInt a, BigInt b);
 BigInt operator^ (BigInt a, BigInt b);
 BigInt operator~ (BigInt a);
-
 BigInt operator << (BigInt a, int n);
 BigInt operator >> (BigInt a, int n);
+
