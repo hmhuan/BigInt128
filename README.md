@@ -1,6 +1,7 @@
 # BigInt128
 HCMUS_2017-2018
-Project #1 [KTMT&HN]
+Subject: [KTMT&HN]
+Project #1 BigInt
 
 Team :
 1. Vo Nhat Vinh
