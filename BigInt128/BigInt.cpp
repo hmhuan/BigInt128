@@ -209,16 +209,14 @@ void Bu2(BigInt &a)
 string ChuanHoa(string bit)
 {
 	while (bit.length() < 128)
-	{
 		bit = "0" + bit;
-	}
 	return bit;
 }
 
 //base to BigInt
 void DecimalToBigInt(BigInt &a, string dec)
 {
-	int n, chiSo, vitriBit;
+	int n, ID, bitID;
 	bool check = true;
 	
 	a =  BigInt();
@@ -234,17 +232,18 @@ void DecimalToBigInt(BigInt &a, string dec)
 	{
 		if (n == 0) break;
 		
-		chiSo = i / 32;
-		vitriBit = 31 - i % 32;
+		ID = i / 32;
+		bitID = 31 - i % 32;
 
 		if ((dec[n - 1] - '0') % 2 == 1)
 		{
-			if (chiSo < 0 || (chiSo == 0 && vitriBit == 31))
+			if (ID < 0 || (ID == 0 && bitID >= 31 && check))
 			{
 				cout << "So qua lon.";
+				a = BigInt();
 				return;
 			}
-			a.data[chiSo] = a.data[chiSo] | (1 << vitriBit);
+			a.data[ID] = a.data[ID] | (1 << bitID);
 		}
 		dec = Chia2(dec);
 		n = dec.length();
@@ -255,21 +254,16 @@ void DecimalToBigInt(BigInt &a, string dec)
 
 void BinaryToBigInt(BigInt & a, string dec)
 {
-	int n = dec.length();
-	int ID, bitID;
-	
+	int ID, bitID,n = dec.length();
 	a = BigInt();
 
 	for (int i = 127;; i--)
 	{
-		if (n == 0)
-			break;
+		if (n == 0) break;
 		ID = i / 32;
 		bitID = 31 - i % 32;
 		if (dec[n-1] == '1')
-		{
 			a.data[ID] = a.data[ID] | (1 << bitID);
-		}
 		n--;
 	}
 }
@@ -293,6 +287,7 @@ void HexadecimalToBigInt(BigInt & a, string dec)
 string DecimalToBinary(unsigned int x)
 {
 	string bin = "";
+
 	while (x != 0)
 	{
 		if (x % 2 == 1)
@@ -301,12 +296,9 @@ string DecimalToBinary(unsigned int x)
 			bin = '0' + bin;
 		x /= 2;
 	}
-	int n = bin.length();
-	while (n < 32)
-	{
+	while (bin.length() < 32)
 		bin = '0' + bin;
-		n++;
-	}
+
 	return bin;
 }
 
@@ -315,7 +307,7 @@ string BinaryToDecimal(string bit)
 	string dec, temp = "";
 	int n;
 	bit = ChuanHoa(bit);
-	//Neu la so am chuyen ve so duong bang cach lay bu 2
+	//Neu la so am chuyen ve so duong bang cach lay bu 2 sau do gan dau - cho ket qua
 	if (bit[0] == '1')
 	{
 		BigInt tmp;
@@ -325,12 +317,10 @@ string BinaryToDecimal(string bit)
 		temp = "-";
 	}
 	n = bit.length();
-	for (int i = 0; i < n; i++)
+	for (int i = 0; i < bit.length(); i++)
 	{
 		if (bit[i] == '1')
-		{
 			dec = Cong(dec, HaiMuX(n - 1 - i));
-		}
 	}
 	dec = temp + dec;
 	if (dec == "")
@@ -358,9 +348,9 @@ BigInt operator+ (BigInt a, BigInt b)
 			result = c + result;
 			temp = sum / 10;
 		}
-	while (result[0] == '0')
-		result.erase(result.begin());
-	if (result.length() == 0)
+	/*while (result[0] == '0')
+		result.erase(result.begin());*/
+	if (result == "")
 		result = "0";
 	BinaryToBigInt(res, result);
 	return res;
@@ -470,19 +460,40 @@ BigInt operator*(BigInt a, BigInt b)
 BigInt operator/(BigInt a, BigInt b)
 {
 	BigInt res, bigA;
+	bool check = true;
 	string A, Q = DecToBin(a), M = DecToBin(b);
-	string temp = DecToBin(a - b);
-	int n = Q.length(), k = n;
+	string temp;
+	int n, k;
 
+	//chuyen ve so duong het
+	if ((Q.length() == 128 && Q[0] == '1' && (M.length() < 128 || (M.length() == 128 && M[0] == '0'))))
+	{
+		check = false;
+		Bu2(a);
+		Q = DecToBin(a);
+	}
+	if ((M.length() == 128 && M[0] == '1' && (Q.length() < 128 || (Q.length() == 128 && Q[0] == '0'))))
+	{
+		check = false;
+		Bu2(b);
+		M = DecToBin(b);
+	}
+	if (M.length() == 128 && M[0] == '1' && Q.length() == 128 && Q[0] == '1')
+	{
+		Bu2(a);
+		Q = DecToBin(a);
+		Bu2(b);
+		M = DecToBin(b);
+	}
+
+	temp = DecToBin(a - b);
 	if (temp[0] == '1' && temp.length() == 128)
 		return res;
-	//Khởi tạo
-	if (Q.length() == 128 && Q[0] == '1')
-		for (int i = 0; i < n; i++)
-			A += '1';
-	else
-		for (int i = 0; i < n; i++)
-			A += '0';
+	n = Q.length();
+	k = n;
+	//Khởi tạo (vi mac dinh Q, M > 0 do o buoc tren thuc hien nen A = '0..0')
+	for (int i = 0; i < n; i++)
+		A += '0';
 	while (k > 0)
 	{
 		A = A.substr(1, n - 1) + Q[0];
@@ -502,6 +513,8 @@ BigInt operator/(BigInt a, BigInt b)
 		k--;
 	}
 	BinaryToBigInt(res, Q);
+	if (!check)
+		Bu2(res);
 	return res;
 }
 
