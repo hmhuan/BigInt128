@@ -18,7 +18,7 @@ int main(int argc, char * argv[])
 		bNum2 = BigInt();			//TH2 : <hệ số 1> p1 (2/10/16) <hệ số 2>p2(2/10/16) <số>
 		s4 = "";					//TH3: <hệ số>p (2/10/16) <số> <NOT>(~)
 									//Luôn luôn đọc được s1, s2, s3
-		if ((s3.length() == 1) && (s3 != "~"))
+		if (((s3.length() == 1) && (s3 != "~")) || (s3 == ">>") || (s3 == "<<"))
 			fIn >> s4;
 		//cout << s1 << " " << s2 << " " << s3 << " " << s4 << endl;
 			//Nếu s4 = "" thì là TH2,TH3 ngược lại là TH1
